@@ -15,16 +15,16 @@ The bioinformatic pipeline for read classification consisted in three steps:
 
 ## Quality control and paired read merging
 
-Quality control was done with Trimmomatic (Bolger et al. 2014) and reads were merged with PEAR (Zhang et al. 2014). Trimmomatic trimmed the SmarterThruPlex adapters and deleted low quality nucleotides in the 3’ using a sliding window of four nucleotides. Pear run with default options. In both programs reads smaller than 50bp were excluded.
+Quality control was done with Trimmomatic (Bolger et al. 2014) and reads were merged with PEAR (Zhang et al. 2014). Trimmomatic trimmed the SmarterThruPlex adapters and low quality nucleotides at the 3’ while pear run with default options. In both programs reads smaller than 50bp were excluded.
 
 Both programs can be run for multiple samples using the shell script **Run_Trimomatic_and_PEAR.bash**. Three positional arguments are used for this script. 1st the directory containing the paired fastq files compressed as gunzip, 2nd the directory to save the processed fastq files, and 3rd the path containing Trimmomatic executable and directory with adapter sequences:
 
     bash Run_Trimomatic_and_PEAR.bash /path/to/input_fastq.gz/ /path/to/outpu_fastq.gz/ /path/to/Trimmomatic/
 
-All outputs are saved in the gunzip compressed format. The resulting files were converted to fasta
+All outputs are saved in the gunzip compressed format. The resulting files were then converted into fasta farmat.
 
 ## Homology search with blast
-We used blast to find homology of the metagenomic reads with the reference database. Three references databases were used. 1) The nucleotide database from genebank (nt); 2) A database composed of freshwater fish genomes (genome); 3) A database composed of freshwater fish transcriptomes (transcriptomes). We used blastn version from ncbi-blast-2.12.0+.
+We used blastn from from ncbi-blast-2.12.0+ to find homology betwee the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) A database composed of freshwater fish genomes (genome); 3) A database composed of freshwater fish transcriptomes (transcriptomes). The program run with the folowing code:
 
     blastn -query /path/to/Metagenomics_reads.fasta \
     -db /path/to/nt/database/nt -perc_identity 90 -qcov_hsp_perc 0.9 \
