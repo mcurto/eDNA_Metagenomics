@@ -6,10 +6,14 @@ Here we present all the scripts and codes used by Curto et al. XXXX. In this man
 
 # Shot gun sequencing data analysis
 
-The bioinformatic pipeline for read classification consisted in three steps: 1) Quality control and paired read merging, 2) Homology search with blast, 3) Taxonomic classification using the blast outputs.
+The bioinformatic pipeline for read classification consisted in three steps:
+
+- [Quality control and paired read merging](#quality-control-and-paired-read-merging)
+- [Homology search with blast](#homology-search-with-blast)
+- [Taxonomic classification](#taxonomic-classification)
 
 
-## 1) Quality control and paired read merging
+## Quality control and paired read merging
 
 Quality control was done with Trimmomatic (Bolger et al. 2014) and reads were merged with PEAR (Zhang et al. 2014). Trimmomatic trimmed the SmarterThruPlex adapters and deleted low quality nucleotides in the 3’ using a sliding window of four nucleotides. Pear run with default options. In both programs reads smaller than 50bp were excluded.
 
@@ -19,7 +23,7 @@ Both programs can be run for multiple samples using the shell script **Run_Trimo
 
 All outputs are saved in the gunzip compressed format. The resulting files were converted to fasta
 
-## 2) Blast
+## Homology search with blast
 We used blast to find homology of the metagenomic reads with the reference database. Three references databases were used. 1) The nucleotide database from genebank (nt); 2) A database composed of freshwater fish genomes (genome); 3) A database composed of freshwater fish transcriptomes (transcriptomes). We used blastn version from ncbi-blast-2.12.0+.
 
     blastn -query /path/to/Metagenomics_reads.fasta \
@@ -30,7 +34,7 @@ We used blast to find homology of the metagenomic reads with the reference datab
 
 Reads that were not merged in the previous step R1 and R2 files were blasted separately using the same options.
 
-## 3) Taxonomic classification using the blast outputs
+## Taxonomic classification
 
 The nucelotide database was already prebuild with taxonomic information while the genome and transcriptome not. So different approaches were used to process the blast output files. In both cases the the results were processed in three steps : i) adding the taxonomic lineage to the matches; ii) filter the results based on identity, evalue, query coverage; iii) sumurize the final taxonomy per read. 
 
