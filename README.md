@@ -24,7 +24,7 @@ Both programs can be run for multiple samples using the shell script **Run_Trimo
 All outputs are saved in the gunzip compressed format. The resulting files were then converted into fasta farmat.
 
 ## Homology search with blast
-We used blastn from from ncbi-blast-2.12.0+ to find homology betwee the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) A database composed of freshwater fish genomes (genome); 3) A database composed of freshwater fish transcriptomes (transcriptomes). The program run with the folowing code:
+We used blastn from from ncbi-blast-2.12.0+ to find homology betwee the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the folowing code:
 
     blastn -query /path/to/Metagenomics_reads.fasta \
     -db /path/to/nt/database/nt -perc_identity 90 -qcov_hsp_perc 0.9 \
@@ -36,11 +36,11 @@ Reads that were not merged in the previous step R1 and R2 files were blasted sep
 
 ## Taxonomic classification
 
-The nucelotide database was already prebuild with taxonomic information while the genome and transcriptome not. So different approaches were used to process the blast output files. In both cases the the results were processed in three steps : i) adding the taxonomic lineage to the matches; ii) filter the results based on identity, evalue, query coverage; iii) sumurize the final taxonomy per read. 
+The nucelotide database was already prebuild with taxonomic information which was not the case for the remaining ones. Because of that the blast outputs had ro be processed differently. In both cases, the the output files were analysed in four steps: i) Combined unassembled paired reads; ii) filter the results based on identity, evalue, query coverage; iii) adding the taxonomic lineage to the matches; iiii) sumurize the final taxonomy per read. 
 
 ### nt database:
 
-**Combined unassembled paired reads:**
+#### Combined unassembled paired reads:
 
 The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes as positional arguments, in this order: 1st the path the read 1 blast outputs, 2nd the path to the read 2 blast outputs, 3rd the path to the fasta files, 4th the output directory.
 
@@ -48,14 +48,16 @@ The blast results from unassembled paired reads were merged with the script **Me
 
 The resulting files were concatenated with the assembled output.
 
-**Filter results**
+#### Filter results:
+
 The blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1st the path to the a directory containing the blast outputs that should have the *.blastout extension; 2nd the path to the directory where the filtered files should be saved; 3rd the minimum e-value to keep a match; 4th the minimum identity; 5th the minimum query coverage. Here an example with the parameters used in the paper:
 
     python3 FilterBlast.py /path/to/directory/Blast_outputs/ /path/to/directory/Blast_filtered_outputs/ 1e-10 99 0.9
 
 This script will merge matches showing the same parameters.
 
-**Add taxonomic lineage to results:**
+#### Add taxonomic lineage to results:
+
 Taxonomic lineage was added in three steps. First the taxonomic IDs were extracted with the script **ExtractTaxID_Filt.py**. Second extract the lineage using the Taxonomic IDs with taxonkit (Shen and Ren 2021). Third add lineage information the the filtered matches with the script **AddTaxonomyFiltFile_WithTaxIDInfo.py**
 
 The script ExtractTaxID_Filt.py takes two positional arguments: 1st the directory containing the filtered blast outputs, and 2nd a path to the output file containing the taxonomic IDs:
@@ -72,7 +74,8 @@ The lineages are then added to the filtered files with the script **TaxonomyFilt
     python3 AddTaxonomyFiltFile_WithTaxIDInfo.py /path/to/directory/Blast_filtered_outputs/ /path/to/Lineage_file.txt /path/to/directory/Blast_lineage_outputs/
 
 
-**Summarize taxonomy**
+#### Summarize taxonomy:
+
 Taxonomy can be summarize by defining a final lineage per read with the script **SummariseTaxonomyPerRead.py**.
 
 The script **SummariseTaxonomyPerRead.py** will find the most recent common taxon in case multiple best matches are found. The resulting output will be a tab separated text file containing the folowing information per line: read name, match identity, read length, alignment length, e-vaule, bit score, and final lineage. The script needs two positional arguments: 1st the directory containing the lineage files, 2nd the directory to save the outputs per sample:
