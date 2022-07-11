@@ -1,9 +1,10 @@
-# eDNA Metagenomics: Scripts and codes used in Curto et al xxx
+# eDNA Metagenomics: Scripts and codes used in Curto et al. 
 
 
-Here we present all the scripts and codes that we used in Curto et al. XXXX. In this manuscript we used Illumina shot gun sequencing from environmental DNA (eDNA) of a water sample from the Ave river to evaluate its applicability in retrieving biological diversity at both community level and at species level. For the species level we focused in fresh water fishes. A comparison was also made with metabarcoding by using the 12S primer.
+Here we present all the scripts and codes used by Curto et al. XXXX. In this manuscript Illumina shot gun sequencing data was produced for environmental DNA (eDNA) contained in water samples from  the Ave river to evaluate eDNA metagenomics applicability in retrieving biological diversity information at multiple taxonomic levels and scales. In this scope we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015).
 
-#Shot gun sequencing data analysis
+
+# Shot gun sequencing data analysis
 
 The bioinformatic pipeline for read classification consisted in three steps: 1) Quality control and paired read merging, 2) Homology search with blast, 3) Taxonomic classification using the blast outputs.
 
@@ -161,7 +162,7 @@ Then the scrip **Sliding_window_ID.py** is used to estimate the degree of identi
 
 
 
-## References:
+# References:
 Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.
 
 Zhang, J., Kobert, K., Flouri, T., & Stamatakis, A. (2014). PEAR: a fast and accurate Illumina Paired-End reAd mergeR. Bioinformatics, 30(5), 614-620.
@@ -178,4 +179,5 @@ Garrison, E., & Marth, G. (2012). Haplotype-based variant detection from short-r
 
 Danecek, P., Auton, A., Abecasis, G., Albers, C. A., Banks, E., DePristo, M. A., ... & 1000 Genomes Project Analysis Group. (2011). The variant call format and VCFtools. Bioinformatics, 27(15), 2156-2158.
 
+Miya, Masaki, et al. "MiFish, a set of universal PCR primers for metabarcoding environmental DNA from fishes: detection of more than 230 subtropical marine species." Royal Society open science 2.7 (2015): 150088.
 
