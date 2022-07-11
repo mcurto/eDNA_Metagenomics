@@ -1,7 +1,7 @@
 # eDNA Metagenomics: Scripts and codes used in Curto et al. 
 
 
-Here we present all the scripts and codes used by Curto et al. XXXX. In this manuscript Illumina shot gun sequencing data was produced for environmental DNA (eDNA) contained in water samples from  the Ave river to evaluate eDNA metagenomics applicability in retrieving biological diversity information at multiple taxonomic levels and scales. In this scope we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015).
+Here we present all the scripts and codes used by Curto et al. XXXX. In this manuscript Illumina shot gun sequencing data was produced for environmental DNA (eDNA) contained in water samples from  the Ave river to evaluate eDNA metagenomics applicability in retrieving biological diversity information at multiple taxonomic levels and scales. In this scope we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). 
 
 
 # Shot gun sequencing data analysis
@@ -24,7 +24,7 @@ Both programs can be run for multiple samples using the shell script **Run_Trimo
 All outputs are saved in the gunzip compressed format. The resulting files were then converted into fasta farmat.
 
 ## Homology search with blast
-We used blastn from from ncbi-blast-2.12.0+ to find homology betwee the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the folowing code:
+We used blastn from from ncbi-blast-2.12.0+ to find homology between the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the folowing code:
 
     blastn -query /path/to/Metagenomics_reads.fasta \
     -db /path/to/nt/database/nt -perc_identity 90 -qcov_hsp_perc 0.9 \
@@ -32,7 +32,7 @@ We used blastn from from ncbi-blast-2.12.0+ to find homology betwee the shot-gun
     -outfmt "6 qseqid sseqid staxids pident qlen length evalue bitscore" \
     -num_threads 10
 
-Reads that were not merged in the previous step R1 and R2 files were blasted separately using the same options.
+For the reads that were not merged in the previous step, the R1 and R2 files were blasted separately using the same options.
 
 ## Taxonomic classification
 
@@ -42,7 +42,7 @@ The nucelotide database was already prebuild with taxonomic information which wa
 
 #### Combined unassembled paired reads:
 
-The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes as positional arguments, in this order: 1st the path the read 1 blast outputs, 2nd the path to the read 2 blast outputs, 3rd the path to the fasta files, 4th the output directory.
+The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes as positional arguments, in this order: 1st the path to the read 1 blast outputs, 2nd the path to the read 2 blast outputs, 3rd the path to the fasta files, 4th the output directory.
 
     python3 ~/eDNA/Analysis03-04-2020/Blast/MergeR1AndR2_v2.py /path/to/directory/blastout_Read1/ /path/to/directory/blastout_Read2/ /path/to/directory/fasta/ path/to/directory/output/
 
