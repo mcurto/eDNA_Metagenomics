@@ -156,21 +156,21 @@ Then they were mapped to the reference genome with bwa (Li and Durbin 2009) and 
 
 - Referene genome indexing
 
-    bwa index GCF_018340385.1_ASM1834038v1_genomic.fna.gz
+      bwa index GCF_018340385.1_ASM1834038v1_genomic.fna.gz
 
 - Mapping to reference
 
-    bwa mem -M -t 10 GCF_018340385.1_ASM1834038v1_genomic.fna.gz DRR172221_1.paired.fastq.g DRR172221_2.paired.fastq.g | samtools view -bS - > SRR13304660.bam
+      bwa mem -M -t 10 GCF_018340385.1_ASM1834038v1_genomic.fna.gz DRR172221_1.paired.fastq.g DRR172221_2.paired.fastq.g | samtools view -bS - > SRR13304660.bam
 
 PCR duplicates were marked with Picard after sorting the bam files:
 
 - Bam sorting 
     
-    java -jar ~/programs/picard/build/libs/picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
+      java -jar ~/programs/picard/build/libs/picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
  
 - Marking duplicates
 
-    java -jar ~/programs/picard/build/libs/picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
+      java -jar ~/programs/picard/build/libs/picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
 
 
 And the resulting bam files were indexed with samtools and used for variant calling with freebayes (Garrison and Marth 2012):
