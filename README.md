@@ -191,10 +191,9 @@ Depth per position is calculated with samtools:
     
     samtools depth -a DRR172221-sorted-md.bam > DRR172221-sorted-md.tsv
 
-Then the scrip **Sliding_window_ID.py** is used to estimate the degree of identity per sliding window. The script requires five positional arguments: 1st sliding window size, 2nd vcf file, 3rd depth file, 4th minimum depth, 5th output file:
+Then the scrip **Sliding_window_ID.py** is used to estimate the degree of identity per sliding window. The script requires five positional arguments:  1<sup>st</sup> sliding window size, 2<sup>nd</sup> vcf file, 3<sup>rd</sup> depth file, 4<sup>th</sup> minimum depth, 5th output file:
 
     python Sliding_window_ID.py 189 SRR13304660-sorted-md.freebayes.vcf DRR172221-sorted-md.tsv 3 DRR172221.nr_SNPs.txt
-
 
 
 # References:
