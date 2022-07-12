@@ -47,7 +47,7 @@ The nucelotide database was already prebuild with taxonomic information which wa
 
 #### Combined unassembled paired reads:
 
-The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes as positional arguments, in this order: 1st the path to the read 1 blast outputs, 2nd the path to the read 2 blast outputs, 3rd the path to the fasta files, 4th the output directory.
+The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes four positional arguments, in this order: 1<sup>st</sup> the path to the read 1 blast outputs, 2<sup>nd</sup> the path to the read 2 blast outputs, 3<sup>rd</sup> the path to the fasta files, 4<sup>th</sup>  the output directory.
 
     python3 ~/eDNA/Analysis03-04-2020/Blast/MergeR1AndR2_v2.py /path/to/directory/blastout_Read1/ /path/to/directory/blastout_Read2/ /path/to/directory/fasta/ path/to/directory/output/
 
@@ -55,7 +55,7 @@ The resulting files were concatenated with the assembled output.
 
 #### Filter results:
 
-The blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1st the path to the a directory containing the blast outputs that should have the *.blastout extension; 2nd the path to the directory where the filtered files should be saved; 3rd the minimum e-value to keep a match; 4th the minimum identity; 5th the minimum query coverage. Here an example with the parameters used in the paper:
+The blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1<sup>st</sup> the path to the a directory containing the blast outputs that should have the ".blastout" extension; 2<sup>nd</sup> the path to the directory where the filtered files should be saved; 3<sup>rd</sup> the minimum e-value to keep a match; 4<sup>th</sup> the minimum identity; 5th the minimum query coverage. Here an example with the parameters used in the paper:
 
     python3 FilterBlast.py /path/to/directory/Blast_outputs/ /path/to/directory/Blast_filtered_outputs/ 1e-10 99 0.9
 
@@ -63,18 +63,19 @@ This script will merge matches showing the same parameters.
 
 #### Add taxonomic lineage to results:
 
-Taxonomic lineage was added in three steps. First the taxonomic IDs were extracted with the script **ExtractTaxID_Filt.py**. Second extract the lineage using the Taxonomic IDs with taxonkit (Shen and Ren 2021). Third add lineage information the the filtered matches with the script **AddTaxonomyFiltFile_WithTaxIDInfo.py**
+Taxonomic lineage was added in three steps. First the taxonomic IDs were extracted with the script **ExtractTaxID_Filt.py**. Second the lineage was retrieved using taxonkit (Shen and Ren 2021). Third lineage information was addedto the filtered blast outputs with the script **AddTaxonomyFiltFile_WithTaxIDInfo.py**
 
-The script ExtractTaxID_Filt.py takes two positional arguments: 1st the directory containing the filtered blast outputs, and 2nd a path to the output file containing the taxonomic IDs:
+The script ExtractTaxID_Filt.py takes two positional arguments: 1<sup>st</sup> the directory containing the filtered blast outputs, and 2<sup>nd</sup> the path to the output file where the taxonomic IDs will be saved:
 
     python3 ExtractTaxID_Filt.py /path/to/directory/Blast_filtered_outputs/ /path/to/TaxID_file.txt
 
 The resulting Tax ID file was used to extract the lineages using the taxonkit tool. This step requires the taxonomy database from genbank (https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz) to be downloaded and decompressed.
+
 Taxonkit can be run in the folowing way:
 
     taxonkit lineage --data-dir /path/to/taxdump/ /path/to/TaxID_file.txt -o /path/to/Lineage_file.txt
 
-The lineages are then added to the filtered files with the script **TaxonomyFiltFile_WithTaxIDInfo.py** by adding an extract collumn to the blast output. This script takes three positional arguments: 1st the directory containing the filtered reads, 2nd the path to the file containing the lineages, 3rd the output directory:
+The lineages are then added to the filtered files with the script **TaxonomyFiltFile_WithTaxIDInfo.py** by adding an extract collumn to the blast output. This script takes three positional arguments: 1<sup>st</sup> the directory containing the filtered reads, 2<sup>nd</sup> the path to the file containing the lineages, 3<sup>rd</sup> the output directory:
 
     python3 AddTaxonomyFiltFile_WithTaxIDInfo.py /path/to/directory/Blast_filtered_outputs/ /path/to/Lineage_file.txt /path/to/directory/Blast_lineage_outputs/
 
@@ -83,52 +84,59 @@ The lineages are then added to the filtered files with the script **TaxonomyFilt
 
 Taxonomy can be summarize by defining a final lineage per read with the script **SummariseTaxonomyPerRead.py**.
 
-The script **SummariseTaxonomyPerRead.py** will find the most recent common taxon in case multiple best matches are found. The resulting output will be a tab separated text file containing the folowing information per line: read name, match identity, read length, alignment length, e-vaule, bit score, and final lineage. The script needs two positional arguments: 1st the directory containing the lineage files, 2nd the directory to save the outputs per sample:
+The script **SummariseTaxonomyPerRead.py** will find the most recent common taxon in case multiple best matches are found. The resulting output will be a tab separated text file containing the folowing information per line: read name, match identity, read length, alignment length, e-vaule, bit score, and final lineage. The script needs two positional arguments: 1<sup>st</sup> the directory containing the lineage files, 2<sup>nd</sup> the directory to save the outputs per sample:
 
     python3 SummariseTaxonomyPerRead.py /path/to/directory/Blast_lineage_outputs/ /path/to/directory/Final_lineage_per_read/
 
 
 ### Genome and transcriptome databases:
-The analysis for the comparison with genomes and transcriptomes databases only differed from the nt analysis in the step where lineage information are added. More precisely, this step is done before the filtering step with the script **AddLineage2Genomes.py**. This was done **before the filtering step** and two tables need to be prepared:
+The analysis for the genomes and transcriptomes databases only differed from the nt analysis in the step where lineage information are added. More precisely, this step is done before the filtering step with the script **AddLineage2Genomes.py**. For that two tab separated tables need to be prepared:
 
 1) A correspondence between accession number, taxon and TaxID as follows:
-accession number 1<TAB>taxon 1<TAB>TaxID 1
-accession number 2<TAB>taxon 2<TAB>TaxID 2
+
+|   |   |   |
+|---|---|---|
+| accession number 1 | taxon 1 | TaxID 1 |
+| accession number 2 | taxon 2 | TaxID 2 |
 
 2) A correspondence between TaxID and lineage:
-TaxID 1<TAB>lineage1
-TaxID 2<TAB>lineage2
 
-Then the script **AddLineage2Genomes.py** is used to add both TaxID and lineage information to the filtered blast files. It takes four positional arguments: 1st the list containing the  correspondence between accession number, taxon and TaxID; 2nd the correspondence between TaxID and lineage; 3rd the directory where the filtered were saved; and 4th the directory to save the output files: 
+|   |   |
+|---|---|
+| TaxID 1 |  lineage1 |
+| TaxID 2 |  lineage2 | 
+
+
+Then the script **AddLineage2Genomes.py** is used to add both TaxID and lineage information to the filtered blast files. It takes four positional arguments: 1<sup>st</sup> the list containing the  correspondence between accession number, taxon and TaxID; 2<sup>nd</sup> the correspondence between TaxID and lineage; 3<sup>rd</sup> the directory where the filtered were saved; and 4<sup>th</sup> the directory to save the output files: 
 
     python3 AddLineage2Genomes.py /path/to/Accession_species_TaxID_correspondance.txt /path/to/TaxID_Lineages_correspondence.txt path/to/directory/Blast_outputs/ /path/to/directory/Blast_lineage_outputs/
 
-##Merging and filtering results from different databases
+
+### Merging and filtering results from different databases
 The results from different databases were merged for fish taxa. This was done by:
 
-1st merging and sorting the results from different databases with the following command:
+**1)** merging and sorting the results from different databases with the following command:
 
-    cat Path/to/result/nt/database/* Path/to/result/genome/database/* Path/to/result/transcriptome/database/* | sort -k1 > Shotgun_results_all/all_blastout_results.blastout
+    cat path/to/result/nt/database/* path/to/result/genome/database/* path/to/result/transcriptome/database/* | sort -k1 > path/to/all_blastout_results_concatenated.blastout
 
-2nd Filter for the best match and merge equally good matches using the similar criteria to the Filter step. The main difference is the fact that the evalue is not used since it is database dependent. The script needs two positional arguments: 1st the directory containing the input files, 2nd the directory to save the output files:
+**2)** Filter for the best match and merge equally good matches using the similar criteria to the filtering step. The main difference is that the evalue is not used since it is database dependent. The script needs two positional arguments: 1<sup>st</sup> the directory containing the input files, 2<sup>nd</sup> the directory to save the output files:
 
-    python3 FilterBlast_MergedPerRead.py Shotgun_results_all/ Shotgun_results_all_Best/
+    python3 FilterBlast_MergedPerRead.py path/to/concatenated/files/ path/to/concatenated/files_filtered/
 
-3rd Summarize the results per read as described before with the script **SummariseTaxonomyPerRead_BestDB.py**:
+**3)** Summarize the results per read as described before with the script **SummariseTaxonomyPerRead_BestDB.py**:
 
-    python3 SummariseTaxonomyPerRead_BestDB.py Shotgun_results_all_Best/ Shotgun_results_all_Best_Final/
+    python3 SummariseTaxonomyPerRead_BestDB.py path/to/concatenated/files_filtered/ path/to/concatenated/files_filtered_sumtax/
 
-These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files from all databases using grep and the taxonomic information for all these matches was added as described above. The the script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1st the merged output with the best matches across all databases, 2nd the blast output file with all matches for the same reads across all databases with lineage information included, 3rd the taxonomic group that needs to be present in at least more than one match,and  4th a prefix to save output files. In this case two output files are saved. One with the filtered data (*.filt.blastout) and a second with the number of matches the specified taxon (*.check_data.blastout). Here an example of a code:
+These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files from all databases using grep and the taxonomic information for all these matches as described above (see Add taxonomic lineage to results section). The the script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1<sup>st</sup> the merged output with the best matches across all databases, 2<sup>nd</sup> the blast output file with all matches for the same reads across all databases with lineage information included, 3<sup>rd</sup> the target taxonomic group, and 4<sup>th</sup> a prefix to save output files. In this case two output files are saved. One with the filtered data (.filt.blastout) and a second with the number of matches the specified taxon (.check_data.blastout). Here an example of a code:
 
-    python3 Positive_read_check.py Shotgun_results_all_Best/Best_matches_across_databases.blastout All_fish_matches.blastout Best_matches_across_databases.out
-    
+    python3 Positive_read_check.py path/to/concatenated/files_filtered_sumtax.blastout path/to/all_matches_lineage.txt Actinopteri  path/to/output/directory/prefix    
  
     
 # Metabarcoding analysis
 
-ASVs for metbarcoding analysis were obtained with the R package DADA2 as described in the script **dada2_12S_Metabarcoding.R**.
+Amplicon sequence variants (ASVs) for metbarcoding analysis were obtained with the R package DADA2 as described in the script **dada2_12S_Metabarcoding.R** and saved on a ASV table.
 
-The sequences were extracted in the fasta format using the script XXX.py as follows:
+The sequences were extracted in the fasta format using the script **extract_ASVs.py** as follows:
 
     python3 extract_ASVs.py ASV_table.txt ASV_sequences.fasta
 
