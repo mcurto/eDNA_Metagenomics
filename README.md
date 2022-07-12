@@ -145,34 +145,43 @@ Reads taxonomic assignment was obtained as described for the shotgun sequencing 
 
 # Sliding window analysis to obtain identity distributions
 
-Divergence within a certain sliding window was estimated with the script **Sliding_window_ID.py**. This requires a vcf file and the coverage per position. Here the complete analytical pipeline is presented for the comparison of the reads from the run DRR172221 (Carassius auratus) to the Cyprinus carpio genome. The reads are initially mapped to the reference and variants are called. In parallel the average depth per position also needs to be estimated.
+Identity distributions resulting from the comparison of pulicaly available shotgun sequencing data with reference genomes was done by estimating the identity between the shot gun data and the refernce genomte within sliding windows of the size of the average metagenomics fish read size. This was done using the script **Sliding_window_ID.py** that requires a vcf file containing the allele call from this comparison and the correspondant averagen converage per position. Here we present the complete analytical pipeline showing how this was done using the comparison between the reads from Carassius auratus (DRR172221) with the Cyprinus carpio genome (GCF_018340385.1).
 
 
-The downloaded read files were quality controlled with trimmomatic. Here an example for the sample DRR172221:
+The downloaded shotgun sequencing files were quality controlled with trimmomatic. Here an example for the sample DRR172221:
 
     java -jar ~/programs/Trimmomatic-0.39/trimmomatic-0.39.jar PE -threads 6 -phred33 DRR172221_1.fastq.gz DRR172221_2.fastq.gz DRR172221_1.paired.fastq.gz SRR13304660_1.unpaired.fastq.gz DRR172221_2.paired.fastq.gz SRR13304660_2.unpaired.fastq.gz ILLUMINACLIP:All_adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:70
 
-Then they were mapped to the reference genome with bwa (Li and Durbin 2009) and converted to bam files with samtools (Li et al 2009). Here an example with the mapping to the genome with reference  GCF_018340385.1:
+Then they were mapped to the reference genome with bwa (Li and Durbin 2009) and converted to bam files with samtools (Li et al 2009). Here an example with the mapping to the genome with reference GCF_018340385.1:
+
+- Referene genome indexing
 
     bwa index GCF_018340385.1_ASM1834038v1_genomic.fna.gz
 
+- Mapping to reference
+
     bwa mem -M -t 10 GCF_018340385.1_ASM1834038v1_genomic.fna.gz DRR172221_1.paired.fastq.g DRR172221_2.paired.fastq.g | samtools view -bS - > SRR13304660.bam
 
-PCR duplicates were marked with Picard:
+PCR duplicates were marked with Picard after sorting the bam files:
+
+- Bam sorting 
     
     java -jar ~/programs/picard/build/libs/picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
+ 
+- Marking duplicates
 
     java -jar ~/programs/picard/build/libs/picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
 
+
 And the resulting bam files were indexed with samtools and used for variant calling with freebayes (Garrison and Marth 2012):
 
-Indexing:
+- Indexing:
     
-    samtools index DRR172221-sorted-md.bam
+      samtools index DRR172221-sorted-md.bam
 
-Variant calling:
+- Variant calling:
 
-    freebayes -f GCF_018340385.1_ASM1834038v1_genomic.fna DRR172221-sorted-md.bam > SRR13304660-sorted-md.freebayes.vcf
+      freebayes -f GCF_018340385.1_ASM1834038v1_genomic.fna DRR172221-sorted-md.bam > SRR13304660-sorted-md.freebayes.vcf
 
 Indels were removed with vcf tools (Danecek et al. 2011):
     
