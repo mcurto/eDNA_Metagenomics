@@ -1,10 +1,15 @@
 # eDNA Metagenomics: Scripts and codes used in Curto et al. 
 
 
-Here we present all the scripts and codes used by Curto et al. XXXX. In this manuscript Illumina shot gun sequencing data was produced for environmental DNA (eDNA) contained in water samples from  the Ave river to evaluate eDNA metagenomics applicability in retrieving biological diversity information at multiple taxonomic levels and scales. In this scope we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). 
+Here we present all the scripts and codes used by Curto et al. XXXX. In this manuscript, Illumina shot gun sequencing data was produced for environmental DNA (eDNA) contained in water samples from the Ave river to evaluate eDNA metagenomics applicability in retrieving biological diversity information at multiple taxonomic levels. In this scope, we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). Moreover we performed several tests comparing inter- and intraspecific identity distribution of several publicaly available shotguns sequencing datasets with the reference genomes of Cyprinus carpio, Anguilla anguilla and Anguilla rostrata. Therefore, this repository is devided in three parts:
+
+- [eDNA metagenomics shot gun sequencing data analysis](#edna-metagenomics-shotgun-sequencing-data-analysis)
+- [Metabarcoding analysis](#metabarcoding-analysis)
+- [Sliding window analysis to obtain identity distributions](#sliding-window-analysis-to-obtain-identity-distributions)
 
 
-# Shot gun sequencing data analysis
+
+# eDNA metagenomics shotgun sequencing data analysis
 
 The bioinformatic pipeline for read classification consisted in three steps:
 
@@ -116,9 +121,11 @@ The results from different databases were merged for fish taxa. This was done by
 These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files from all databases using grep and the taxonomic information for all these matches was added as described above. The the script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1st the merged output with the best matches across all databases, 2nd the blast output file with all matches for the same reads across all databases with lineage information included, 3rd the taxonomic group that needs to be present in at least more than one match,and  4th a prefix to save output files. In this case two output files are saved. One with the filtered data (*.filt.blastout) and a second with the number of matches the specified taxon (*.check_data.blastout). Here an example of a code:
 
     python3 Positive_read_check.py Shotgun_results_all_Best/Best_matches_across_databases.blastout All_fish_matches.blastout Best_matches_across_databases.out
-
-
+    
+ 
+    
 # Metabarcoding analysis
+
 ASVs for metbarcoding analysis were obtained with the R package DADA2 as described in the script **dada2_12S_Metabarcoding.R**.
 
 The sequences were extracted in the fasta format using the script XXX.py as follows:
@@ -144,6 +151,7 @@ Then they were mapped to the reference genome with bwa (Li and Durbin 2009) and 
     bwa mem -M -t 10 GCF_018340385.1_ASM1834038v1_genomic.fna.gz DRR172221_1.paired.fastq.g DRR172221_2.paired.fastq.g | samtools view -bS - > SRR13304660.bam
 
 PCR duplicates were marked with Picard:
+    
     java -jar ~/programs/picard/build/libs/picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
 
     java -jar ~/programs/picard/build/libs/picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
@@ -151,6 +159,7 @@ PCR duplicates were marked with Picard:
 And the resulting bam files were indexed with samtools and used for variant calling with freebayes (Garrison and Marth 2012):
 
 Indexing:
+    
     samtools index DRR172221-sorted-md.bam
 
 Variant calling:
@@ -158,9 +167,11 @@ Variant calling:
     freebayes -f GCF_018340385.1_ASM1834038v1_genomic.fna DRR172221-sorted-md.bam > SRR13304660-sorted-md.freebayes.vcf
 
 Indels were removed with vcf tools (Danecek et al. 2011):
+    
     vcftools --vcf DRR172221-sorted-md.freebayes.vcf --remove-indels --recode --recode-INFO-all --out DRR172221-sorted-md.freebayes.snps-only.vcf
 
 Depth per position is calculated with samtools:
+    
     samtools depth -a DRR172221-sorted-md.bam > DRR172221-sorted-md.tsv
 
 Then the scrip **Sliding_window_ID.py** is used to estimate the degree of identity per sliding window. The script requires five positional arguments: 1st sliding window size, 2nd vcf file, 3rd depth file, 4th minimum depth, 5th output file:
