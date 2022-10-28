@@ -47,9 +47,9 @@ The nucleotide database was already prebuilt with taxonomic information which wa
 
 #### Combined unassembled paired reads:
 
-The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes four positional arguments, in this order: 1<sup>st</sup> the path to the read 1 blast outputs, 2<sup>nd</sup> the path to the read 2 blast outputs, 3<sup>rd</sup> the path to the fasta files, 4<sup>th</sup>  the output directory.
+The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.2.py**. This script takes four positional arguments, in this order: 1<sup>st</sup> the path to the read 1 blast outputs, 2<sup>nd</sup> the path to the read 2 blast outputs, 3<sup>rd</sup> the path to the fasta files, 4<sup>th</sup>  the output directory.
 
-    python3 MergeR1AndR2_v2.py /path/to/directory/blastout_Read1/ /path/to/directory/blastout_Read2/ /path/to/directory/fasta/ path/to/directory/output/
+    python3 MergeR1AndR2.2.py /path/to/directory/blastout_Read1/ /path/to/directory/blastout_Read2/ /path/to/directory/fasta/ path/to/directory/output/
 
 The resulting files were concatenated with the assembled output.
 
