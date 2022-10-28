@@ -1,7 +1,7 @@
-# eDNA Metagenomics: Scripts and codes used in Curto et al. 
+# eDNA Metagenomics: Scripts and codes used in Curto, M., Veríssimo, A., Santos, C. D., Riccioni, G., Ribeiro, F., Jentoft, S., Alves, M. J., Gante, H. F. (in prep.) Improving whole biodiversity monitoring with eDNA metagenomics. 
 
 
-Here we present all the scripts and codes used by Curto et al. XXXX. In this manuscript, Illumina shot gun sequencing data was produced for environmental DNA (eDNA) contained in water samples from the Ave river to evaluate eDNA metagenomics applicability in retrieving biological diversity information at multiple taxonomic levels. In this scope, we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). Moreover we performed several tests comparing inter- and intraspecific identity distribution of several publicaly available shotguns sequencing datasets with the reference genomes of Cyprinus carpio, Anguilla anguilla and Anguilla rostrata. Therefore, this repository is devided in three parts:
+In this manuscript, Illumina shot gun sequencing data was produced for environmental DNA (eDNA) water samples from the Ave River to evaluate eDNA metagenomics applicability in retrieving biological diversity information. In this scope, we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). Moreover, we performed several tests comparing inter- and intraspecific identity distribution of several publicly available shotguns sequencing datasets with the reference genomes of Cyprinus carpio, Anguilla anguilla and Anguilla rostrata. Therefore, this repository is divided in three parts:
 
 - [eDNA metagenomics shot gun sequencing data analysis](#edna-metagenomics-shotgun-sequencing-data-analysis)
 - [Metabarcoding analysis](#metabarcoding-analysis)
@@ -20,7 +20,7 @@ The bioinformatic pipeline for read classification consisted in three steps:
 
 ## Quality control and paired read merging
 
-Quality control was done with Trimmomatic (Bolger et al. 2014) and reads were merged with PEAR (Zhang et al. 2014). Trimmomatic trimmed the SmarterThruPlex adapters and low quality nucleotides at the 3’ while pear run with default options. In both programs reads smaller than 50bp were excluded.
+Quality control was done with Trimmomatic (Bolger et al. 2014) and reads were merged with PEAR (Zhang et al. 2014). Trimmomatic trimmed the SmarterThruPlex adapters and low-quality nucleotides at the 3’ while pear run with default options. In both programs reads smaller than 50bp were excluded.
 
 Both programs can be run for multiple samples using the shell script **Run_Trimomatic_and_PEAR.bash**. Three positional arguments are used for this script. 1st the directory containing the paired fastq files compressed as gunzip, 2nd the directory to save the processed fastq files, and 3rd the path containing Trimmomatic executable and directory with adapter sequences:
 
@@ -29,7 +29,7 @@ Both programs can be run for multiple samples using the shell script **Run_Trimo
 All outputs are saved in the gunzip compressed format. The resulting files were then converted into fasta farmat.
 
 ## Homology search with blast
-We used blastn from from ncbi-blast-2.12.0+ to find homology between the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the folowing code:
+The program blastn from ncbi-blast-2.12.0+ was used to find homology between the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the following code:
 
     blastn -query /path/to/Metagenomics_reads.fasta \
     -db /path/to/nt/database/nt -perc_identity 90 -qcov_hsp_perc 0.9 \
@@ -37,11 +37,11 @@ We used blastn from from ncbi-blast-2.12.0+ to find homology between the shot-gu
     -outfmt "6 qseqid sseqid staxids pident qlen length evalue bitscore" \
     -num_threads 10
 
-For the reads that were not merged in the previous step, the R1 and R2 files were blasted separately using the same options.
+The R1 and R2 files from unmerged reads were blasted separately using the same parameters.
 
 ## Taxonomic classification
 
-The nucelotide database was already prebuild with taxonomic information which was not the case for the remaining ones. Because of that the blast outputs had ro be processed differently. In both cases, the the output files were analysed in four steps: i) Combined unassembled paired reads; ii) filter the results based on identity, evalue, query coverage; iii) adding the taxonomic lineage to the matches; iiii) sumurize the final taxonomy per read. 
+The nucleotide database was already prebuilt with taxonomic information which was not the case for the remaining ones. For that reason, their blast outputs had to be processed differently. In both cases, the output files were analyzed in four steps: i) combined unassembled paired reads; ii) filter the results based on e-value, match identity, and query coverage; iii) adding the taxonomic lineage to the matches; iv) summarize the final taxonomy per read. 
 
 ### nt database:
 
@@ -49,13 +49,13 @@ The nucelotide database was already prebuild with taxonomic information which wa
 
 The blast results from unassembled paired reads were merged with the script **MergeR1AndR2.py**. This script takes four positional arguments, in this order: 1<sup>st</sup> the path to the read 1 blast outputs, 2<sup>nd</sup> the path to the read 2 blast outputs, 3<sup>rd</sup> the path to the fasta files, 4<sup>th</sup>  the output directory.
 
-    python3 ~/eDNA/Analysis03-04-2020/Blast/MergeR1AndR2_v2.py /path/to/directory/blastout_Read1/ /path/to/directory/blastout_Read2/ /path/to/directory/fasta/ path/to/directory/output/
+    python3 MergeR1AndR2_v2.py /path/to/directory/blastout_Read1/ /path/to/directory/blastout_Read2/ /path/to/directory/fasta/ path/to/directory/output/
 
 The resulting files were concatenated with the assembled output.
 
 #### Filter results:
 
-The blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1<sup>st</sup> the path to the a directory containing the blast outputs that should have the ".blastout" extension; 2<sup>nd</sup> the path to the directory where the filtered files should be saved; 3<sup>rd</sup> the minimum e-value to keep a match; 4<sup>th</sup> the minimum identity; 5th the minimum query coverage. Here an example with the parameters used in the paper:
+Blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1<sup>st</sup> the path to the a directory containing the blast outputs that should have the ".blastout" extension; 2<sup>nd</sup> the path to the directory where the filtered files should be saved; 3<sup>rd</sup> the minimum e-value to keep a match; 4<sup>th</sup> the minimum identity; 5th the minimum query coverage. Here an example with the parameters used in the paper:
 
     python3 FilterBlast.py /path/to/directory/Blast_outputs/ /path/to/directory/Blast_filtered_outputs/ 1e-10 99 0.9
 
@@ -63,7 +63,7 @@ This script will merge matches showing the same parameters.
 
 #### Add taxonomic lineage to results:
 
-Taxonomic lineage was added in three steps. First the taxonomic IDs were extracted with the script **ExtractTaxID_Filt.py**. Second the lineage was retrieved using taxonkit (Shen and Ren 2021). Third lineage information was addedto the filtered blast outputs with the script **AddTaxonomyFiltFile_WithTaxIDInfo.py**
+Taxonomic lineage was added in three steps. First the taxonomic IDs were extracted with the script **ExtractTaxID_Filt.py**. Second the lineage was retrieved using taxonkit (Shen and Ren 2021). Third lineage information was added to the filtered blast outputs with the script **AddTaxonomyFiltFile_WithTaxIDInfo.py**
 
 The script ExtractTaxID_Filt.py takes two positional arguments: 1<sup>st</sup> the directory containing the filtered blast outputs, and 2<sup>nd</sup> the path to the output file where the taxonomic IDs will be saved:
 
@@ -71,26 +71,26 @@ The script ExtractTaxID_Filt.py takes two positional arguments: 1<sup>st</sup> t
 
 The resulting Tax ID file was used to extract the lineages using the taxonkit tool. This step requires the taxonomy database from genbank (https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz) to be downloaded and decompressed.
 
-Taxonkit can be run in the folowing way:
+Taxonkit can be run in the following way:
 
     taxonkit lineage --data-dir /path/to/taxdump/ /path/to/TaxID_file.txt -o /path/to/Lineage_file.txt
 
-The lineages are then added to the filtered files with the script **TaxonomyFiltFile_WithTaxIDInfo.py** by adding an extract collumn to the blast output. This script takes three positional arguments: 1<sup>st</sup> the directory containing the filtered reads, 2<sup>nd</sup> the path to the file containing the lineages, 3<sup>rd</sup> the output directory:
+The lineages are then added to the filtered files with the script **TaxonomyFiltFile_WithTaxIDInfo.py**. This will be done by adding an extract column to the blast output with that information. This script takes three positional arguments: 1<sup>st</sup> the directory containing the filtered reads, 2<sup>nd</sup> the path to the file containing the lineages, 3<sup>rd</sup> the output directory:
 
     python3 AddTaxonomyFiltFile_WithTaxIDInfo.py /path/to/directory/Blast_filtered_outputs/ /path/to/Lineage_file.txt /path/to/directory/Blast_lineage_outputs/
 
 
 #### Summarize taxonomy:
 
-Taxonomy can be summarize by defining a final lineage per read with the script **SummariseTaxonomyPerRead.py**.
+Taxonomy can be summarized by defining a final lineage per read with the script **SummariseTaxonomyPerRead.py**.
 
-The script **SummariseTaxonomyPerRead.py** will find the most recent common taxon in case multiple best matches are found. The resulting output will be a tab separated text file containing the folowing information per line: read name, match identity, read length, alignment length, e-vaule, bit score, and final lineage. The script needs two positional arguments: 1<sup>st</sup> the directory containing the lineage files, 2<sup>nd</sup> the directory to save the outputs per sample:
+In case multiple best matches are found to a certain read, the script **SummariseTaxonomyPerRead.py** will find the most recent common ancestor among them. The resulting output will be a tab separated text file containing the following information per line: read name, match identity, read length, alignment length, e-vaule, bit score, and final lineage. The script needs two positional arguments: 1<sup>st</sup> the directory containing the lineage files, 2<sup>nd</sup> the directory to save the outputs per sample:
 
     python3 SummariseTaxonomyPerRead.py /path/to/directory/Blast_lineage_outputs/ /path/to/directory/Final_lineage_per_read/
 
 
 ### Genome and transcriptome databases:
-The analysis for the genomes and transcriptomes databases only differed from the nt analysis in the step where lineage information are added. More precisely, this step is done before the filtering step with the script **AddLineage2Genomes.py**. For that two tab separated tables need to be prepared:
+The analysis for the genomes and transcriptomes databases only differed from the nt analysis in the step where lineage information is added. More precisely, this step is done before the filtering step with the script **AddLineage2Genomes.py**. For that two tab-separated tables need to be prepared:
 
 1) A correspondence between accession number, taxon and TaxID as follows:
 
@@ -119,7 +119,7 @@ The results from different databases were merged for fish taxa. This was done by
 
     cat path/to/result/nt/database/* path/to/result/genome/database/* path/to/result/transcriptome/database/* | sort -k1 > path/to/all_blastout_results_concatenated.blastout
 
-**2)** Filter for the best match and merge equally good matches using the similar criteria to the filtering step. The main difference is that the evalue is not used since it is database dependent. The script needs two positional arguments: 1<sup>st</sup> the directory containing the input files, 2<sup>nd</sup> the directory to save the output files:
+**2)** Filter for the best match and merge equally good matches using the similar criteria to the filtering step. The main difference is that the e-value is not used since it is database dependent. The script needs two positional arguments: 1<sup>st</sup> the directory containing the input files, 2<sup>nd</sup> the directory to save the output files:
 
     python3 FilterBlast_MergedPerRead.py path/to/concatenated/files/ path/to/concatenated/files_filtered/
 
@@ -127,14 +127,14 @@ The results from different databases were merged for fish taxa. This was done by
 
     python3 SummariseTaxonomyPerRead_BestDB.py path/to/concatenated/files_filtered/ path/to/concatenated/files_filtered_sumtax/
 
-These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files from all databases using grep and the taxonomic information for all these matches as described above (see Add taxonomic lineage to results section). The the script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1<sup>st</sup> the merged output with the best matches across all databases, 2<sup>nd</sup> the blast output file with all matches for the same reads across all databases with lineage information included, 3<sup>rd</sup> the target taxonomic group, and 4<sup>th</sup> a prefix to save output files. In this case two output files are saved. One with the filtered data (.filt.blastout) and a second with the number of matches the specified taxon (.check_data.blastout). Here an example of a code:
+These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files for all comparison using grep and the taxonomic information for all these matches was retrieved as described above (see Add taxonomic lineage to results section). The script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1<sup>st</sup> the merged output with the best matches across all databases, 2<sup>nd</sup> the blast output file with all matches for the same reads across all databases with lineage information included, 3<sup>rd</sup> the target taxonomic group, and 4<sup>th</sup> a prefix to save output files. In this case two output files are saved. One with the filtered data (.filt.blastout) and a second with the number of matches the specified taxon (.check_data.blastout). Here an example of a code:
 
     python3 Positive_read_check.py path/to/concatenated/files_filtered_sumtax.blastout path/to/all_matches_lineage.txt Actinopteri  path/to/output/directory/prefix    
  
     
 # Metabarcoding analysis
 
-Amplicon sequence variants (ASVs) for metbarcoding analysis were obtained with the R package DADA2 as described in the script **dada2_12S_Metabarcoding.R** and saved on a ASV table.
+Amplicon sequence variants (ASVs) for metabarcoding analysis were obtained with the R package DADA2 as described in the script **dada2_12S_Metabarcoding.R** and saved on a ASV table.
 
 The sequences were extracted in the fasta format using the script **extract_ASVs.py** as follows:
 
@@ -145,12 +145,12 @@ Reads taxonomic assignment was obtained as described for the shotgun sequencing 
 
 # Sliding window analysis to obtain identity distributions
 
-Identity distributions resulting from the comparison of pulicaly available shotgun sequencing data with reference genomes was done by estimating the identity between the shot gun data and the refernce genomte within sliding windows of the size of the average metagenomics fish read size. This was done using the script **Sliding_window_ID.py** that requires a vcf file containing the allele call from this comparison and the correspondant averagen converage per position. Here we present the complete analytical pipeline showing how this was done using the comparison between the reads from Carassius auratus (DRR172221) with the Cyprinus carpio genome (GCF_018340385.1).
+Identity distributions resulting from the comparison of publicly available shotgun sequencing data were estimated within sliding windows running over the alignment between the shot gun reads and the reference genome. This was done using the script **Sliding_window_ID.py** that requires a vcf file containing the allele call from this comparison and the correspondent average read depth per position. Here we present the complete analytical pipeline showing how this was done using the comparison between the reads from Carassius auratus (DRR172221) with the Cyprinus carpio genome (GCF_018340385.1).
 
 
 The downloaded shotgun sequencing files were quality controlled with trimmomatic. Here an example for the sample DRR172221:
 
-    java -jar ~/programs/Trimmomatic-0.39/trimmomatic-0.39.jar PE -threads 6 -phred33 DRR172221_1.fastq.gz DRR172221_2.fastq.gz DRR172221_1.paired.fastq.gz SRR13304660_1.unpaired.fastq.gz DRR172221_2.paired.fastq.gz SRR13304660_2.unpaired.fastq.gz ILLUMINACLIP:All_adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:70
+    java -jar trimmomatic-0.39.jar PE -threads 6 -phred33 DRR172221_1.fastq.gz DRR172221_2.fastq.gz DRR172221_1.paired.fastq.gz SRR13304660_1.unpaired.fastq.gz DRR172221_2.paired.fastq.gz SRR13304660_2.unpaired.fastq.gz ILLUMINACLIP:All_adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:70
 
 Then they were mapped to the reference genome with bwa (Li and Durbin 2009) and converted to bam files with samtools (Li et al 2009). Here an example with the mapping to the genome with reference GCF_018340385.1:
 
@@ -166,11 +166,11 @@ PCR duplicates were marked with Picard after sorting the bam files:
 
 - Bam sorting 
     
-      java -jar ~/programs/picard/build/libs/picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
+      java -jar picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
  
 - Marking duplicates
 
-      java -jar ~/programs/picard/build/libs/picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
+      java -jar picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
 
 
 And the resulting bam files were indexed with samtools and used for variant calling with freebayes (Garrison and Marth 2012):
