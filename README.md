@@ -101,7 +101,7 @@ The analysis for the genomes and transcriptomes databases only differed from the
 
 2) A correspondence between TaxID and lineage:
 
-||||
+|||
 |---|---|
 | TaxID 1 |  lineage1 |
 | TaxID 2 |  lineage2 | 
