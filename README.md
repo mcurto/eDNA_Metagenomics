@@ -94,14 +94,14 @@ The analysis for the genomes and transcriptomes databases only differed from the
 
 1) A correspondence between accession number, taxon and TaxID as follows:
 
-
+||||
 |---|---|---|
 | accession number 1 | taxon 1 | TaxID 1 |
 | accession number 2 | taxon 2 | TaxID 2 |
 
 2) A correspondence between TaxID and lineage:
 
-
+||||
 |---|---|
 | TaxID 1 |  lineage1 |
 | TaxID 2 |  lineage2 | 
