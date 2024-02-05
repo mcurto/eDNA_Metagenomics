@@ -5,7 +5,7 @@ In this manuscript, Illumina shot gun sequencing data was produced for environme
 
 - [eDNA metagenomics shot gun sequencing data analysis](#edna-metagenomics-shotgun-sequencing-data-analysis)
 - [Metabarcoding analysis](#metabarcoding-analysis)
-- [Sliding window analysis to obtain identity distributions](#sliding-window-analysis-to-obtain-identity-distributions)
+- [Establishing multilocus SEQIDIST detection of true and false positives](#establishing-multilocus-seqidist-detection-of-true-and-false-positives)
 
 This repository also harbours supplementary data produced in the mansucript. This includes sequence identity distribution for all matches found with the four databases (Data S1-S4) and the combination of them (Data S5) and read length information used in the comparison between size scales and habitat across all taxa (Data S6) and fish species (Data S7).
 
@@ -144,75 +144,30 @@ The sequences were extracted in the fasta format using the script **extract_ASVs
 Reads taxonomic assignment was obtained as described for the shotgun sequencing analysis.
 
 
-# Sliding window analysis to obtain identity distributions
+# Establishing multilocus SEQIDIST detection of true and false positives
 
-Identity distributions resulting from the comparison of publicly available shotgun sequencing data were estimated within sliding windows running over the alignment between the shot gun reads and the reference genome. This was done using the script **Sliding_window_ID.py** that requires a vcf file containing the allele call from this comparison and the correspondent average read depth per position. Here we present the complete analytical pipeline showing how this was done using the comparison between the reads from Carassius auratus (DRR172221) with the Cyprinus carpio genome (GCF_018340385.1).
+Identity distributions resulting from the comparison of publicly available shotgun sequencing data were estimated using 1000 random reads. These were downloaded, quality filtered, and blasted to reference genomes from Gobio, Gambusia, Lepomis, Micropterus, Luciobarbus, Perca, Sander, Salmo, and Squalius species. This was done with the following steps: **1)** Up to 1M paired reads were downloaded using fastq-dump from the sra toolkit v. 3.0.0 (Sequence Read Archive Toolkit) (https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft);
+**2)** The reads were quality controled with Trimmomatic;
+**3)** 1000 random paired reads were selected using seqtk (Li 2012);
+**4)** Merge paired reads with PEAR;
+**5)** Convert to fasta files;
+**6)** Blast to reference genomes individually using the same parameters as above;
+**7)** Process blast results as described above.
 
+Steps 1 to 5 can be run with the script **DownloadSRA_QC_1000reads_14-12-2022.sh**. The script takes a list of SRA assecion numbers (one assecion number per line) and outputs all the files in a given directory:
 
-The downloaded shotgun sequencing files were quality controlled with trimmomatic. Here an example for the sample DRR172221:
+    bash DownloadSRA_QC_1000reads_14-12-2022.sh Text_file_containing_assecion_numbers.txt Output_directory/
 
-    java -jar trimmomatic-0.39.jar PE -threads 6 -phred33 DRR172221_1.fastq.gz DRR172221_2.fastq.gz DRR172221_1.paired.fastq.gz SRR13304660_1.unpaired.fastq.gz DRR172221_2.paired.fastq.gz SRR13304660_2.unpaired.fastq.gz ILLUMINACLIP:All_adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:70
-
-Then they were mapped to the reference genome with bwa (Li and Durbin 2009) and converted to bam files with samtools (Li et al 2009). Here an example with the mapping to the genome with reference GCF_018340385.1:
-
-- Referene genome indexing
-
-      bwa index GCF_018340385.1_ASM1834038v1_genomic.fna.gz
-
-- Mapping to reference
-
-      bwa mem -M -t 10 GCF_018340385.1_ASM1834038v1_genomic.fna.gz DRR172221_1.paired.fastq.g DRR172221_2.paired.fastq.g | samtools view -bS - > SRR13304660.bam
-
-PCR duplicates were marked with Picard after sorting the bam files:
-
-- Bam sorting 
-    
-      java -jar picard.jar SortSam I=DRR172221.bam O=DRR172221-sorted.bam SORT_ORDER=coordinate
- 
-- Marking duplicates
-
-      java -jar picard.jar MarkDuplicates I=SRR13304660-sorted.bam O=DRR172221-sorted-md.bam M=DRR172221-md-metrics.txt
-
-
-And the resulting bam files were indexed with samtools and used for variant calling with freebayes (Garrison and Marth 2012):
-
-- Indexing:
-    
-      samtools index DRR172221-sorted-md.bam
-
-- Variant calling:
-
-      freebayes -f GCF_018340385.1_ASM1834038v1_genomic.fna DRR172221-sorted-md.bam > SRR13304660-sorted-md.freebayes.vcf
-
-Indels were removed with vcf tools (Danecek et al. 2011):
-    
-    vcftools --vcf DRR172221-sorted-md.freebayes.vcf --remove-indels --recode --recode-INFO-all --out DRR172221-sorted-md.freebayes.snps-only.vcf
-
-Depth per position is calculated with samtools:
-    
-    samtools depth -a DRR172221-sorted-md.bam > DRR172221-sorted-md.tsv
-
-Then the scrip **Sliding_window_ID.py** is used to estimate the degree of identity per sliding window. The script requires five positional arguments:  1<sup>st</sup> sliding window size, 2<sup>nd</sup> vcf file, 3<sup>rd</sup> depth file, 4<sup>th</sup> minimum depth, 5th output file:
-
-    python Sliding_window_ID.py 189 SRR13304660-sorted-md.freebayes.vcf DRR172221-sorted-md.tsv 3 DRR172221.nr_SNPs.txt
 
 
 # References:
 Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.
 
+Li, H. (2012). seqtk Toolkit for processing sequences in FASTA/Q formats. GitHub 767, 69.
+
 Zhang, J., Kobert, K., Flouri, T., & Stamatakis, A. (2014). PEAR: a fast and accurate Illumina Paired-End reAd mergeR. Bioinformatics, 30(5), 614-620.
 
 Shen, W., & Ren, H. (2021). TaxonKit: a practical and efficient NCBI taxonomy toolkit. Journal of Genetics and Genomics, 48(9), 844-850.
-
-Li H. and Durbin R. (2009) Fast and accurate short read alignment with Burrows-Wheeler Transform. Bioinformatics, 25:1754-60.
-
-Li H., Handsaker B.*, Wysoker A., Fennell T., Ruan J., Homer N., Marth G., Abecasis G., Durbin R. and 1000 Genome Project Data Processing Subgroup (2009) The Sequence alignment/map (SAM) format and SAMtools. Bioinformatics, 25, 2078-9.
-
-Picard Toolkit. (2019). Picard toolkit. Broad Institute, Github Repository.
-
-Garrison, E., & Marth, G. (2012). Haplotype-based variant detection from short-read sequencing. arXiv preprint arXiv:1207.3907.
-
-Danecek, P., Auton, A., Abecasis, G., Albers, C. A., Banks, E., DePristo, M. A., ... & 1000 Genomes Project Analysis Group. (2011). The variant call format and VCFtools. Bioinformatics, 27(15), 2156-2158.
 
 Miya, Masaki, et al. "MiFish, a set of universal PCR primers for metabarcoding environmental DNA from fishes: detection of more than 230 subtropical marine species." Royal Society open science 2.7 (2015): 150088.
 
