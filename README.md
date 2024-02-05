@@ -7,6 +7,7 @@ In this manuscript, Illumina shot gun sequencing data was produced for environme
 - [Metabarcoding analysis](#metabarcoding-analysis)
 - [Sliding window analysis to obtain identity distributions](#sliding-window-analysis-to-obtain-identity-distributions)
 
+This repository also harbours supplementary data produced in the mansucript. This includes sequence identity distribution for all matches found with the four databases (Data S1-S4) and the combination of them (Data S5) and read length information used in the comparison between size scales and habitat across all taxa (Data S6) and fish species (Data S7).
 
 
 # eDNA metagenomics shotgun sequencing data analysis
