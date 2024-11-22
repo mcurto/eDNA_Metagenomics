@@ -1,5 +1,6 @@
 # eDNA Metagenomics: Code and suplementary data produced produced in the context of Curto, M., Veríssimo, A., Santos, C. D., Riccioni, G., Ribeiro, F., Jentoft, S., Alves, M. J., Gante, H. F. (in prep.) Improving whole biodiversity monitoring and discovery with environmental DNA metagenomics. 
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14205100.svg)](https://doi.org/10.5281/zenodo.14205100)
 
 In this manuscript, Illumina shot gun sequencing data was produced for environmental DNA (eDNA) water samples from the Ave River to evaluate eDNA metagenomics applicability in retrieving biological diversity information. In this scope, we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). Moreover, we performed several tests comparing inter- and intraspecific identity distribution of several publicly available shotguns sequencing datasets with the reference genomes of Cyprinus carpio, Anguilla anguilla and Anguilla rostrata. Therefore, this repository is divided in three parts:
 
