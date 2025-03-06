@@ -1,14 +1,14 @@
-# eDNA Metagenomics: Code and suplementary data produced produced in the context of Curto, M., Veríssimo, A., Santos, C. D., Riccioni, G., Ribeiro, F., Jentoft, S., Alves, M. J., Gante, H. F. (in prep.) Improving whole biodiversity monitoring and discovery with environmental DNA metagenomics. 
+# eDNA Metagenomics: Code and supplementary data produced in the context of Curto, M., Veríssimo, A., Santos, C. D., Riccioni, G., Ribeiro, F., Jentoft, S., Alves, M. J., Gante, H. F. (in prep.) Improving whole biodiversity monitoring and discovery with environmental DNA metagenomics. 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14205100.svg)](https://doi.org/10.5281/zenodo.14205100)
 
-In this manuscript, Illumina shot gun sequencing data was produced for environmental DNA (eDNA) water samples from the Ave River to evaluate eDNA metagenomics applicability in retrieving biological diversity information. In this scope, we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). Moreover, we performed several tests comparing inter- and intraspecific identity distribution of several publicly available shotguns sequencing datasets with the reference genomes of Cyprinus carpio, Anguilla anguilla and Anguilla rostrata. Therefore, this repository is divided in three parts:
+In this manuscript, Illumina shot gun sequencing data was produced for environmental DNA (eDNA) water samples from the Ave River to evaluate eDNA metagenomics applicability in retrieving biological diversity information. In this scope, we evaluated first the ability of this method in describing the whole biological community and then the fish community. For the latter a comparison was made with eDNA metabarcoding using the 12S primers from Miya et al (2015). Moreover, we performed several tests comparing inter- and intraspecific identity distribution of several publicly available shotguns sequencing datasets with the reference genomes of Cyprinus carpio, Anguilla anguilla and Anguilla rostrata. Therefore, this repository is divided into three parts:
 
 - [eDNA metagenomics shot gun sequencing data analysis](#edna-metagenomics-shotgun-sequencing-data-analysis)
 - [Metabarcoding analysis](#metabarcoding-analysis)
 - [Establishing multilocus SEQIDIST detection of true and false positives](#establishing-multilocus-seqidist-detection-of-true-and-false-positives)
 
-This repository also harbours supplementary data produced in the mansucript. This includes sequence identity distribution for all matches found with the four databases (Data S1-S4) and the combination of them (Data S5) and read length information used in the comparison between size scales and habitat across all taxa (Data S6) and fish species (Data S7).
+This repository also contains supplementary data produced in this study. This includes sequence identity distribution for all matches found with the four databases (Data S1-S4) and the combination of them (Data S5) and read length information used in the comparison between size scales and habitat across all taxa (Data S6) and fish species (Data S7).
 
 
 # eDNA metagenomics shotgun sequencing data analysis
@@ -28,10 +28,10 @@ Both programs can be run for multiple samples using the shell script **Run_Trimo
 
     bash Run_Trimomatic_and_PEAR.bash /path/to/input_fastq.gz/ /path/to/outpu_fastq.gz/ /path/to/Trimmomatic/
 
-All outputs are saved in the gunzip compressed format. The resulting files were then converted into fasta farmat.
+All outputs are saved in the gunzip compressed format. The resulting files were then converted into fasta format.
 
 ## Homology search with blast
-The program blastn from ncbi-blast-2.12.0+ was used to find homology between the shot-gun reads and different reference databases: 1) The nucleotide database from genebank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the following code:
+The program blastn from ncbi-blast-2.12.0+ was used to find homology between the shot-gun reads and different reference databases: 1) The nucleotide database from GenBank (nt); 2) Fish genomes of all species with resources available for all families present in Portugal plus the genomes from fish that are commonly eaten by humans (genome); 3)Fish transcriptomes of all species with resources available for all families present in Portugal plus the transcriptomes from fish that are commonly eaten by humans (transcriptomes). The program ran with the following code:
 
     blastn -query /path/to/Metagenomics_reads.fasta \
     -db /path/to/nt/database/nt -perc_identity 90 -qcov_hsp_perc 0.9 \
@@ -57,7 +57,7 @@ The resulting files were concatenated with the assembled output.
 
 #### Filter results:
 
-Blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1<sup>st</sup> the path to the a directory containing the blast outputs that should have the ".blastout" extension; 2<sup>nd</sup> the path to the directory where the filtered files should be saved; 3<sup>rd</sup> the minimum e-value to keep a match; 4<sup>th</sup> the minimum identity; 5th the minimum query coverage. Here an example with the parameters used in the paper:
+Blast results were filtered using the script **FilterBlast.py**. This takes five positional arguments: 1<sup>st</sup> the path to the a directory containing the blast outputs that should have the ".blastout" extension; 2<sup>nd</sup> the path to the directory where the filtered files should be saved; 3<sup>rd</sup> the minimum e-value to keep a match; 4<sup>th</sup> the minimum identity; 5th the minimum query coverage. Here is an example with the parameters used in the paper:
 
     python3 FilterBlast.py /path/to/directory/Blast_outputs/ /path/to/directory/Blast_filtered_outputs/ 1e-10 99 0.9
 
@@ -71,7 +71,7 @@ The script ExtractTaxID_Filt.py takes two positional arguments: 1<sup>st</sup> t
 
     python3 ExtractTaxID_Filt.py /path/to/directory/Blast_filtered_outputs/ /path/to/TaxID_file.txt
 
-The resulting Tax ID file was used to extract the lineages using the taxonkit tool. This step requires the taxonomy database from genbank (https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz) to be downloaded and decompressed.
+The resulting Tax ID file was used to extract the lineages using the taxonkit tool. This step requires the taxonomy database from GenBank (https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz) to be downloaded and decompressed.
 
 Taxonkit can be run in the following way:
 
@@ -129,7 +129,7 @@ The results from different databases were merged for fish taxa. This was done by
 
     python3 SummariseTaxonomyPerRead_BestDB.py path/to/concatenated/files_filtered/ path/to/concatenated/files_filtered_sumtax/
 
-These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files for all comparison using grep and the taxonomic information for all these matches was retrieved as described above (see Add taxonomic lineage to results section). The script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1<sup>st</sup> the merged output with the best matches across all databases, 2<sup>nd</sup> the blast output file with all matches for the same reads across all databases with lineage information included, 3<sup>rd</sup> the target taxonomic group, and 4<sup>th</sup> a prefix to save output files. In this case two output files are saved. One with the filtered data (.filt.blastout) and a second with the number of matches the specified taxon (.check_data.blastout). Here an example of a code:
+These results were then filtered to ensure that only fish matches were kept. This was done by checking if there was another sub-optimal match to a fish taxon. To do that, the fish matches were extracted from unfiltered files for all comparison using grep and the taxonomic information for all these matches was retrieved as described above (see Add taxonomic lineage to results section). The script **Positive_read_check.py** was used to filter the results. The script takes four arguments: 1<sup>st</sup> the merged output with the best matches across all databases, 2<sup>nd</sup> the blast output file with all matches for the same reads across all databases with lineage information included, 3<sup>rd</sup> the target taxonomic group, and 4<sup>th</sup> a prefix to save output files. In this case two output files are saved. One with the filtered data (.filt.blastout) and a second with the number of matches the specified taxon (.check_data.blastout). Here is an example of a code:
 
     python3 Positive_read_check.py path/to/concatenated/files_filtered_sumtax.blastout path/to/all_matches_lineage.txt Actinopteri  path/to/output/directory/prefix    
  
@@ -148,14 +148,14 @@ Reads taxonomic assignment was obtained as described for the shotgun sequencing 
 # Establishing multilocus SEQIDIST detection of true and false positives
 
 Identity distributions resulting from the comparison of publicly available shotgun sequencing data were estimated using 1000 random reads. These were downloaded, quality filtered, and blasted to reference genomes from Gobio, Gambusia, Lepomis, Micropterus, Luciobarbus, Perca, Sander, Salmo, and Squalius species. This was done with the following steps: **1)** Up to 1M paired reads were downloaded using fastq-dump from the sra toolkit v. 3.0.0 (Sequence Read Archive Toolkit) (https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft);
-**2)** The reads were quality controled with Trimmomatic;
+**2)** The reads were quality controlled with Trimmomatic;
 **3)** 1000 random paired reads were selected using seqtk (Li 2012);
 **4)** Merge paired reads with PEAR;
 **5)** Convert to fasta files;
 **6)** Blast to reference genomes individually using the same parameters as above;
 **7)** Process blast results as described above.
 
-Steps 1 to 5 can be run with the script **DownloadSRA_QC_1000reads_14-12-2022.sh**. The script takes a list of SRA assecion numbers (one assecion number per line) and outputs all the files in a given directory:
+Steps 1 to 5 can be run with the script **DownloadSRA_QC_1000reads_14-12-2022.sh**. The script takes a list of SRA accession numbers (one accession number per line) and outputs all the files in a given directory:
 
     bash DownloadSRA_QC_1000reads_14-12-2022.sh Text_file_containing_assecion_numbers.txt Output_directory/
 
