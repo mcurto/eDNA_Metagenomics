@@ -1,4 +1,4 @@
-# eDNA Metagenomics: Code and supplementary data produced in the context of Curto, M., Veríssimo, A., Santos, C. D., Riccioni, G., Ribeiro, F., Jentoft, S., Alves, M. J., Gante, H. F. (in prep.) Improving whole biodiversity monitoring and discovery with environmental DNA metagenomics. 
+# eDNA Metagenomics: Code and supplementary data produced in the context of Curto, M., Veríssimo, A., Santos, C. D., Riccioni, G., Ribeiro, F., Jentoft, S., Alves, M. J., Gante, H. F. (2025) Improving whole biodiversity monitoring and discovery with environmental DNA metagenomics (https://doi.org/10.1111/1755-0998.14105). 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14205100.svg)](https://doi.org/10.5281/zenodo.14205100)
 
